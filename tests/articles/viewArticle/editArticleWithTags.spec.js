@@ -11,21 +11,24 @@ const testParameters = [
 
 testParameters.forEach(({ tagsNumber, testNameEnding }) => {
   test.describe('Edit article tags', () => {
-    test.beforeEach(async ({ page, user, articleWithoutTags }) => {
+    let taggedArticle;
+
+    test.beforeEach(async ({ page, user, logger }) => {
+      // Sign up and create an article that already has tags
       await signUpUser(page, user);
-      await createArticle(page, articleWithoutTags);
+      taggedArticle = generateNewArticleData(logger, tagsNumber);
+      await createArticle(page, taggedArticle);
     });
 
     test(`User can remove all tags from previously created article with ${testNameEnding}`, async ({
       createArticlePage,
       viewArticlePage,
       homePage,
-      articleWithoutTags,
     }) => {
       await homePage.open();
-      await homePage.openArticle(articleWithoutTags.title);
+      await homePage.openArticle(taggedArticle.title);
 
-      await viewArticlePage.clickEdit(); // critical missing step
+      await viewArticlePage.clickEdit();
       await createArticlePage.removeAllTags();
       await createArticlePage.clickPublishArticleButton();
 
@@ -36,18 +39,17 @@ testParameters.forEach(({ tagsNumber, testNameEnding }) => {
       createArticlePage,
       viewArticlePage,
       homePage,
-      articleWithoutTags,
       logger,
     }) => {
-      const article = generateNewArticleData(logger, tagsNumber);
+      const updatedArticle = generateNewArticleData(logger, tagsNumber);
       await homePage.open();
-      await homePage.openArticle(articleWithoutTags.title);
+      await homePage.openArticle(taggedArticle.title);
 
-      await viewArticlePage.clickEdit(); // open edit form
-      await createArticlePage.fillTagsField(article.tags);
+      await viewArticlePage.clickEdit();
+      await createArticlePage.fillTagsField(updatedArticle.tags);
       await createArticlePage.clickPublishArticleButton();
 
-      await viewArticlePage.assertArticleTagsAreVisible(article.tags);
+      await viewArticlePage.assertArticleTagsAreVisible(updatedArticle.tags);
     });
   });
 });
