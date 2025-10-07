@@ -25,7 +25,7 @@ testParameters.forEach(({ tagsNumber, testNameEnding }) => {
       await homePage.open();
       await homePage.openArticle(articleWithoutTags.title);
 
-      // Use createArticlePage for editing (same form)
+      await viewArticlePage.clickEdit(); // critical missing step
       await createArticlePage.removeAllTags();
       await createArticlePage.clickPublishArticleButton();
 
@@ -43,7 +43,7 @@ testParameters.forEach(({ tagsNumber, testNameEnding }) => {
       await homePage.open();
       await homePage.openArticle(articleWithoutTags.title);
 
-      // Use the same fixture here
+      await viewArticlePage.clickEdit(); // open edit form
       await createArticlePage.fillTagsField(article.tags);
       await createArticlePage.clickPublishArticleButton();
 
